@@ -48,8 +48,9 @@ with st.form("image_generation_form"):
     with col1:
         size = st.selectbox(
             "Image Size",
-            options=["1024x1024", "1024x1792", "1792x1024"],
-            index=0
+            options=["1024x1024", "1536x1024", "1024x1536"],
+            index=0,
+            help="1024x1024 (square), 1536x1024 (landscape), 1024x1536 (portrait)"
         )
     with col2:
         n_images = st.number_input("Number of images", min_value=1, max_value=4, value=1)
