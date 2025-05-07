@@ -82,31 +82,40 @@ if submit_button and prompt:
             )
             
             if response.status_code == 200:
-                data = response.json()
-                
-                # Display the generated images
-                st.success("Images generated successfully!")
-                
-                # Create columns for the images
-                cols = st.columns(min(n_images, 2))
-                
-                for idx, base64_image in enumerate(data["images"]):
-                    # Convert base64 to image
-                    image_data = base64.b64decode(base64_image.split(",")[1])
-                    image = Image.open(io.BytesIO(image_data))
+                try:
+                    data = response.json()
                     
-                    # Display image in the appropriate column
-                    with cols[idx % 2]:
-                        st.image(image, caption=f"Generated Image {idx + 1}")
-                        # Create a download link
-                        st.markdown(f"""
-                        <a href="data:image/png;base64,{base64_image.split(',')[1]}" 
-                           download="generated_image_{idx + 1}.png">
-                           Download Image {idx + 1}
-                        </a>
-                        """, unsafe_allow_html=True)
+                    # Display the generated images
+                    st.success("Images generated successfully!")
+                    
+                    # Create columns for the images
+                    cols = st.columns(min(n_images, 2))
+                    
+                    for idx, base64_image in enumerate(data["images"]):
+                        # Convert base64 to image
+                        image_data = base64.b64decode(base64_image.split(",")[1])
+                        image = Image.open(io.BytesIO(image_data))
+                        
+                        # Display image in the appropriate column
+                        with cols[idx % 2]:
+                            st.image(image, caption=f"Generated Image {idx + 1}")
+                            # Create a download link
+                            st.markdown(f"""
+                            <a href="data:image/png;base64,{base64_image.split(',')[1]}" 
+                               download="generated_image_{idx + 1}.png">
+                               Download Image {idx + 1}
+                            </a>
+                            """, unsafe_allow_html=True)
+                except Exception as e:
+                    st.error(f"Error processing response: {str(e)}")
+                    st.error("Raw response:")
+                    st.code(response.text)
             else:
-                st.error(f"Error: {response.json().get('details', 'Failed to generate images')}")
+                try:
+                    error_data = response.json()
+                    st.error(f"Error: {error_data.get('details', 'Failed to generate images')}")
+                except:
+                    st.error(f"Error: {response.text}")
                 
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
