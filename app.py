@@ -27,6 +27,22 @@ with st.form("image_generation_form"):
         height=100
     )
     
+    # Add multiple image upload
+    uploaded_files = st.file_uploader("Upload reference images (optional)", type=["png", "jpg", "jpeg"], accept_multiple_files=True)
+    reference_images = []
+    if uploaded_files:
+        st.write("Reference Images:")
+        cols = st.columns(min(len(uploaded_files), 3))  # Show max 3 images per row
+        for idx, uploaded_file in enumerate(uploaded_files):
+            # Convert the uploaded file to base64
+            image_bytes = uploaded_file.getvalue()
+            reference_image = base64.b64encode(image_bytes).decode('utf-8')
+            reference_images.append(reference_image)
+            
+            # Display image in the appropriate column
+            with cols[idx % 3]:
+                st.image(uploaded_file, caption=f"Reference Image {idx + 1}", width=200)
+    
     # Use columns for layout
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -60,7 +76,8 @@ if submit_button and prompt:
                     "size": size,
                     "n": n_images,
                     "quality": quality,
-                    "transparent": transparent
+                    "transparent": transparent,
+                    "reference_images": reference_images
                 }
             )
             
