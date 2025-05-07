@@ -4,6 +4,7 @@ import base64
 from PIL import Image
 import io
 import os
+import time
 
 # Set page config
 st.set_page_config(
@@ -11,6 +12,13 @@ st.set_page_config(
     page_icon="🎨",
     layout="wide"
 )
+
+# Show notification about 60-second limit
+st.warning("""
+⚠️ **Important Notice**: Image generation requests have a 60-second timeout limit. 
+If your request takes longer, it will be automatically cancelled. 
+For complex prompts or multiple reference images, please keep your requests concise.
+""")
 
 # Title and description
 st.title("AI Image Generator")
@@ -69,6 +77,9 @@ with st.form("image_generation_form"):
 if submit_button and prompt:
     with st.spinner("Generating images..."):
         try:
+            # Show timeout warning
+            st.info("⏱️ Request timeout: 60 seconds")
+            
             # Make request to our Node.js service
             response = requests.post(
                 f"{API_URL}/api/generate-image",
@@ -119,6 +130,18 @@ if submit_button and prompt:
                 except:
                     st.error(f"Error: {response.text}")
                 
+        except requests.exceptions.Timeout:
+            st.error("""
+            ⚠️ Request timed out after 60 seconds. This can happen with:
+            - Complex prompts
+            - Multiple reference images
+            - High quality settings
+            
+            Please try:
+            1. Simplifying your prompt
+            2. Using fewer reference images
+            3. Selecting a lower quality setting
+            """)
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
