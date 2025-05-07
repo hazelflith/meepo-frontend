@@ -12,30 +12,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# Function to compress image
-def compress_image(image, max_size_mb=5):
-    # Convert to RGB if image is in RGBA mode
-    if image.mode == 'RGBA':
-        image = image.convert('RGB')
-    
-    # Start with quality 95
-    quality = 95
-    output = io.BytesIO()
-    
-    # Compress image with reducing quality until size is under max_size_mb
-    while True:
-        output.seek(0)
-        output.truncate()
-        image.save(output, format='JPEG', quality=quality)
-        size_mb = len(output.getvalue()) / (1024 * 1024)
-        
-        if size_mb <= max_size_mb or quality <= 5:
-            break
-            
-        quality -= 5
-    
-    return output.getvalue()
-
 # Title and description
 st.title("AI Image Generator")
 st.markdown("Generate images using OpenAI's GPT Image model")
@@ -58,17 +34,14 @@ with st.form("image_generation_form"):
         st.write("Reference Images:")
         cols = st.columns(min(len(uploaded_files), 3))  # Show max 3 images per row
         for idx, uploaded_file in enumerate(uploaded_files):
-            # Read and compress the image
-            image = Image.open(uploaded_file)
-            compressed_image = compress_image(image)
-            
-            # Convert the compressed image to base64
-            reference_image = base64.b64encode(compressed_image).decode('utf-8')
-            reference_images.append(f"data:image/jpeg;base64,{reference_image}")
+            # Convert the uploaded file to base64
+            image_bytes = uploaded_file.getvalue()
+            reference_image = base64.b64encode(image_bytes).decode('utf-8')
+            reference_images.append(f"data:image/{uploaded_file.type.split('/')[-1]};base64,{reference_image}")
             
             # Display image in the appropriate column
             with cols[idx % 3]:
-                st.image(image, caption=f"Reference Image {idx + 1}", width=200)
+                st.image(uploaded_file, caption=f"Reference Image {idx + 1}", width=200)
     
     # Use columns for layout
     col1, col2, col3, col4 = st.columns(4)
