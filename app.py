@@ -28,7 +28,7 @@ with st.form("image_generation_form"):
     )
     
     # Use columns for layout
-    col1, col2 = st.columns(2)
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
         size = st.selectbox(
             "Image Size",
@@ -37,6 +37,14 @@ with st.form("image_generation_form"):
         )
     with col2:
         n_images = st.number_input("Number of images", min_value=1, max_value=4, value=1)
+    with col3:
+        quality = st.selectbox(
+            "Image Quality",
+            options=["low", "medium", "high"],
+            index=2
+        )
+    with col4:
+        transparent = st.checkbox("Transparent Background", value=False)
     
     submit_button = st.form_submit_button("Generate Images")
 
@@ -50,7 +58,9 @@ if submit_button and prompt:
                 json={
                     "prompt": prompt,
                     "size": size,
-                    "n": n_images
+                    "n": n_images,
+                    "quality": quality,
+                    "transparent": transparent
                 }
             )
             
