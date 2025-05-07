@@ -27,8 +27,8 @@ with st.form("image_generation_form"):
         height=100
     )
     
-    # Use beta_columns for older Streamlit versions
-    col1, col2 = st.beta_columns(2)
+    # Use columns for layout
+    col1, col2 = st.columns(2)
     with col1:
         size = st.selectbox(
             "Image Size",
@@ -60,8 +60,8 @@ if submit_button and prompt:
                 # Display the generated images
                 st.success("Images generated successfully!")
                 
-                # Create columns for the images using beta_columns
-                cols = st.beta_columns(min(n_images, 2))
+                # Create columns for the images
+                cols = st.columns(min(n_images, 2))
                 
                 for idx, (base64_image, file_path) in enumerate(zip(data["images"], data["savedFiles"])):
                     # Convert base64 to image
