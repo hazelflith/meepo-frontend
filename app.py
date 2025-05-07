@@ -17,7 +17,7 @@ st.title("AI Image Generator")
 st.markdown("Generate images using OpenAI's GPT Image model")
 
 # Get API URL from environment variable or use default
-API_URL = os.getenv('API_URL', 'http://localhost:3000')
+API_URL = os.getenv('API_URL', 'https://meepo-poc.vercel.app/')
 
 # Input form
 with st.form("image_generation_form"):
