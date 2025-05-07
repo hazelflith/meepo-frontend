@@ -63,7 +63,7 @@ if submit_button and prompt:
                 # Create columns for the images
                 cols = st.columns(min(n_images, 2))
                 
-                for idx, (base64_image, file_path) in enumerate(zip(data["images"], data["savedFiles"])):
+                for idx, base64_image in enumerate(data["images"]):
                     # Convert base64 to image
                     image_data = base64.b64decode(base64_image.split(",")[1])
                     image = Image.open(io.BytesIO(image_data))
